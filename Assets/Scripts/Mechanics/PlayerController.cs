@@ -56,7 +56,10 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+
+                // Only look to see if "jump' is pressed, grounded or not is irrelevant
+                if (Input.GetButtonDown("Jump"))
+                //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
                     jumpState = JumpState.PrepareToJump;
                 else if (Input.GetButtonUp("Jump"))
                 {
@@ -90,11 +93,14 @@ namespace Platformer.Mechanics
                     }
                     break;
                 case JumpState.InFlight:
-                    if (IsGrounded)
+                
+                    jumpState = JumpState.Landed;
+                    /*if (IsGrounded)
                     {
                         Schedule<PlayerLanded>().player = this;
                         jumpState = JumpState.Landed;
                     }
+                    */
                     break;
                 case JumpState.Landed:
                     jumpState = JumpState.Grounded;
@@ -104,7 +110,7 @@ namespace Platformer.Mechanics
 
         protected override void ComputeVelocity()
         {
-            if (jump && IsGrounded)
+            if (jump)
             {
                 velocity.y = jumpTakeOffSpeed * model.jumpModifier;
                 jump = false;
